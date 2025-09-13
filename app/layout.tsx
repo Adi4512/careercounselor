@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import SessionWrapper  from "@/components/SessionWrapper";
+
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Career Counselor",
-  description: "An AI Career Counselor to help you find the best career path for you",
+  title: "Elevare AI – AI-Powered Career Counseling for Your Future.",
+  description: "Elevare AI is an AI-powered career counseling platform that helps you discover the right career path, make smarter decisions, and achieve professional growth with personalized AI guidance.",
 };
 
 export default function RootLayout({
@@ -27,7 +30,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <SessionWrapper>
+          {children}
+        </SessionWrapper>
       </body>
     </html>
   );
