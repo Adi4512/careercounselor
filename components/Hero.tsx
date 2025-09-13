@@ -23,14 +23,14 @@ export const Hero = () => {
     <div className="h-screen bg-[#01030F] text-white relative overflow-hidden">
       {/* Background Stars */}
       <div className="absolute top-20 right-40 ">
-        <img src="./stars.webp" alt="stars" className="w-[500px] h-[500px] " />
+        <img src="/Stars.webp" alt="stars" className="w-[500px] h-[500px] " />
       </div>
       <div className="absolute top-45 left-45 opacity-20">
-        <img src="./stars.webp" alt="stars" className="w-[300px] h-[400px] " />
+        <img src="/Stars.webp" alt="stars" className="w-[300px] h-[400px] " />
       </div>
       <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-0">
         <div className="relative">
-          <img src="./Elements.webp" alt="Elements" className="w-[500px] h-auto" />
+          <img src="/Elements.webp" alt="Elements" className="w-[500px] h-auto" />
           {/* Top fade mask - fades to transparent */}
           <div className="absolute top-20 left-0 right-0 h-52 bg-gradient-to-b from-[#01030F] to-transparent pointer-events-none mix-blend-multiply"></div>
           {/* Bottom fade mask - fades to transparent */}
@@ -40,7 +40,7 @@ export const Hero = () => {
         
       {/* Gradient at bottom left */}
       <div className="absolute bottom-0 left-0 z-0">
-        <img src="./Gradient.webp" alt="Gradient" className="w-auto h-auto" />
+        <img src="/Gradient.webp" alt="Gradient" className="w-auto h-auto" />
       </div>
         
       {/* Navigation Bar */}
@@ -64,7 +64,7 @@ export const Hero = () => {
   </span>
   <span className=" mt-2 text-gray-300 relative inline-block">
     <img
-      src="./TextGlow.webp"
+      src="/TextGlow.webp"
       alt="Text Glow"
       className="absolute top-1/2 left-[40%] transform -translate-x-1/2 -translate-y-1/2 opacity-90 brightness-150 contrast-125 w-[500px] h-[300px] pointer-events-none -z-10"
     />
@@ -97,7 +97,7 @@ export const Hero = () => {
             {/* Background Glow Effects - Behind the model */}
             <div className="absolute inset-0 z-10 flex items-center justify-center">
               <img 
-                src="./ModelGlow.webp" 
+                src="/ModelGlow.webp" 
                 alt="AI Glow Effect" 
                 className="w-[800px] h-[900px] object-contain opacity-90" 
               />
@@ -106,7 +106,7 @@ export const Hero = () => {
             {/* AI Model Image */}
             <div className="relative z-20">
               <img 
-                src="./AImodel.webp" 
+                src="/AImodel.webp" 
                 alt="Elevare AI" 
                 className="w-[700px] h-[800px] object-contain" 
               />

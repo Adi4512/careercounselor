@@ -141,6 +141,8 @@ export default function ChatWindow({ sessionId }: ChatWindowProps) {
               }
             } catch (e) {
               // Ignore parsing errors
+              console.error('Parsing error:', e);
+
             }
           }
         }
