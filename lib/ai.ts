@@ -139,8 +139,7 @@ export class CareerCounselingAI {
             Guidelines:
             - If asked about career paths, give 2-3 specific options
             - If asked about skills, list 3-5 key skills
-            - If asked about job search, give 2-3 actionable steps
-            - Always end with "What would you like to know more about?"`
+            - If asked about job search, give 2-3 actionable steps`
           },
           ...this.buildConversationContext(messageHistory.slice(-10)),
           {
@@ -190,6 +189,7 @@ export class CareerCounselingAI {
               }
             } catch (e) {
               // Ignore parsing errors for incomplete JSON
+              console.error('Parsing error:', e);
             }
           }
         }
@@ -199,7 +199,7 @@ export class CareerCounselingAI {
     }
   }
 
-  private getMockResponse(userMessage: string): AIResponse {
+  private getMockResponse(): AIResponse {
     const responses = [
       "I'd be happy to help with your career question. What specific guidance are you looking for?",
       "That's a great question. What are your main career goals right now?",

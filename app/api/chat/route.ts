@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Convert history to Message format
-    const messageHistory: Message[] = (history || []).map((msg: any) => ({
+    const messageHistory: Message[] = (history || []).map((msg: { id?: string; sender: string; content: string; timestamp?: string | number; status?: string }) => ({
       id: msg.id || Math.random().toString(),
       sender: msg.sender,
       content: msg.content,
