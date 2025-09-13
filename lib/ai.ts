@@ -18,10 +18,10 @@ export class CareerCounselingAI {
       }
       
       // If no API key, return a mock response
-      return this.getMockResponse(userMessage);
+      return this.getMockResponse();
     } catch (error) {
       console.error('AI API error:', error);
-      return this.getMockResponse(userMessage);
+      return this.getMockResponse();
     }
   }
 
@@ -34,7 +34,7 @@ export class CareerCounselingAI {
         yield* this.getOpenRouterStream(userMessage, messageHistory);
       } else {
         // If no API key, return mock response as stream
-        const mockResponse = this.getMockResponse(userMessage);
+        const mockResponse = this.getMockResponse();
         const words = mockResponse.content.split(' ');
         for (const word of words) {
           yield word + ' ';
