@@ -1,10 +1,13 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { Message } from '@/types/chat';
+import { useSendMessage, useChatState } from '@/hooks/use-chat';
 import MessageBubble from './MessageBubble';
 import MessageInput from './MessageInput';
 import TypingIndicator from './TypingIndicator';
+import { Home, ArrowLeft } from 'lucide-react';
 
 interface ChatWindowProps {
   sessionId?: string;
@@ -13,7 +16,14 @@ interface ChatWindowProps {
 export default function ChatWindow({ sessionId }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isThinking, setIsThinking] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  
+  // TanStack Query hooks
+  const sendMessage = useSendMessage();
+  const chatState = useChatState(sessionId || 'default');
 
   // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = () => {
@@ -50,6 +60,8 @@ export default function ChatWindow({ sessionId }: ChatWindowProps) {
     // Add user message immediately
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
+    setIsThinking(true);
+    setIsTyping(false);
 
     // Create AI message placeholder
     const aiMessageId = (Date.now() + 1).toString();
@@ -111,15 +123,20 @@ export default function ChatWindow({ sessionId }: ChatWindowProps) {
             try {
               const data = JSON.parse(line.slice(6));
               
-              if (data.type === 'chunk') {
-                // Update AI message with new content
-                setMessages(prev => 
-                  prev.map(msg => 
-                    msg.id === aiMessageId 
-                      ? { ...msg, content: msg.content + data.content }
-                      : msg
-                  )
-                );
+               if (data.type === 'chunk') {
+                 // Switch from thinking to typing when AI starts responding
+                 if (isThinking) {
+                   setIsThinking(false);
+                   setIsTyping(true);
+                 }
+                 // Update AI message with new content
+                 setMessages(prev => 
+                   prev.map(msg => 
+                     msg.id === aiMessageId 
+                       ? { ...msg, content: msg.content + data.content }
+                       : msg
+                   )
+                 );
               } else if (data.type === 'done') {
                 // Mark AI message as complete
                 setMessages(prev => 
@@ -170,32 +187,31 @@ export default function ChatWindow({ sessionId }: ChatWindowProps) {
       );
     } finally {
       setIsLoading(false);
+      setIsThinking(false);
+      setIsTyping(false);
     }
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-900">
-      {/* Chat Header */}
-      <div className="bg-gray-800 border-b border-gray-700 px-6 py-4">
-        <h1 className="text-xl font-semibold text-white">AI Career Counselor</h1>
-        <p className="text-sm text-gray-400">Get personalized career guidance and advice</p>
-      </div>
-
+    <div className="flex flex-col h-full flex-1">
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-0 bg-[#212121]">
         {messages.map((message) => (
           <MessageBubble key={message.id} message={message} />
         ))}
-        {isLoading && <TypingIndicator />}
+        {isThinking && <TypingIndicator isThinking={true} />}
+        {isTyping && <TypingIndicator isThinking={false} />}
         <div ref={messagesEndRef} />
       </div>
 
       {/* Message Input */}
-      <MessageInput
-        onSendMessage={handleSendMessage}
-        disabled={isLoading}
-        placeholder="Ask me about career planning, job searching, skill development..."
-      />
+      <div className="flex-shrink-0 p-4" style={{ backgroundColor:"#212121"  }}>
+        <MessageInput
+          onSendMessage={handleSendMessage}
+          disabled={isLoading}
+          placeholder="Let’s figure out your next step — ask me anything…"
+        />
+      </div>
     </div>
   );
 }
