@@ -12,10 +12,9 @@ import {
 } from "@/components/ui/resizable-navbar";
 import { useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { cn } from "@/lib/utils";
 
 export function NavbarComponent() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
 

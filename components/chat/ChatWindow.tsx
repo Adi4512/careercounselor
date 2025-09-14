@@ -7,7 +7,6 @@ import { useSendMessage, useChatState } from '@/hooks/use-chat';
 import MessageBubble from './MessageBubble';
 import MessageInput from './MessageInput';
 import TypingIndicator from './TypingIndicator';
-import { Home, ArrowLeft } from 'lucide-react';
 
 interface ChatWindowProps {
   sessionId?: string;
@@ -19,11 +18,6 @@ export default function ChatWindow({ sessionId }: ChatWindowProps) {
   const [isThinking, setIsThinking] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
-  
-  // TanStack Query hooks
-  const sendMessage = useSendMessage();
-  const chatState = useChatState(sessionId || 'default');
 
   // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = () => {
@@ -32,7 +26,7 @@ export default function ChatWindow({ sessionId }: ChatWindowProps) {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages.length]);
 
   // Add welcome message on first load
   useEffect(() => {

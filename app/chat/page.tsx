@@ -3,8 +3,8 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useConversations, useCreateConversation, useUpdateConversation, useDeleteConversation } from '@/hooks/use-conversations';
-import { useSettings, useUpdateSettings } from '@/hooks/use-settings';
+import { useConversations, useCreateConversation, useUpdateConversation, useDeleteConversation } from '@/hooks/use-trpc-conversations';
+import { useSettings, useUpdateSettings, Settings as SettingsType } from '@/hooks/use-trpc-settings';
 import { 
   Sidebar, 
   SidebarContent, 
@@ -16,36 +16,23 @@ import {
   SidebarProvider
 } from '@/components/ui/sidebar';
 import { 
-  Bot, 
-  MessageSquare, 
   Settings, 
-  History, 
   HelpCircle, 
   LogOut,
-  Plus,
-  Star,
-  BookOpen,
-  Zap
+  Plus
 } from 'lucide-react';
 import ChatWindow from '@/components/chat/ChatWindow';
 import ConversationHistory from '@/components/chat/ConversationHistory';
 import SettingsModal from '@/components/chat/SettingsModal';
 
 
-interface Conversation {
-  id: string;
-  title: string;
-  lastMessage: string;
-  timestamp: Date;
-  category: 'career-planning' | 'job-search' | 'skill-development' | 'general';
-}
 
 export default function ChatPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   
   // TanStack Query hooks
-  const { data: conversations = [], isLoading: conversationsLoading } = useConversations();
+  const { data: conversations = [] } = useConversations();
   const createConversation = useCreateConversation();
   const updateConversation = useUpdateConversation();
   const deleteConversation = useDeleteConversation();
@@ -55,7 +42,6 @@ export default function ChatPage() {
   // Local state management
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
-  const [showQuickActions, setShowQuickActions] = useState(false);
 
   useEffect(() => {
     if (status === 'loading') return; // Still loading
@@ -70,7 +56,6 @@ export default function ChatPage() {
     createConversation.mutate({
       title: 'New Chat',
       lastMessage: 'Start a new conversation...',
-      timestamp: new Date(),
       category: 'general'
     }, {
       onSuccess: (newConversation) => {
@@ -84,7 +69,7 @@ export default function ChatPage() {
   };
 
   const handleDeleteConversation = (id: string) => {
-    deleteConversation.mutate(id, {
+    deleteConversation.mutate({ id }, {
       onSuccess: () => {
         if (activeConversationId === id) {
           setActiveConversationId(null);
@@ -100,27 +85,8 @@ export default function ChatPage() {
     });
   };
 
-  const handleQuickAction = (actionId: string) => {
-    const actionPrompts = {
-      'career-assessment': 'I\'d like to do a career assessment. Can you help me evaluate my skills, interests, and values to find the right career path?',
-      'resume-review': 'Please review my resume and provide feedback on how to improve it for better job prospects.',
-      'interview-prep': 'Help me prepare for job interviews. What are the most common questions I should expect and how should I answer them?',
-      'skill-gap': 'Analyze my current skills and identify what skills I need to develop for my target career.',
-      'networking': 'Give me tips on professional networking and building meaningful career connections.',
-      'salary-negotiation': 'Teach me effective salary negotiation strategies and how to research market rates.',
-      'career-change': 'I\'m considering a career change. Help me plan this transition and identify transferable skills.',
-      'leadership': 'Help me develop leadership skills and understand what makes a good leader in my field.'
-    };
 
-    const prompt = actionPrompts[actionId as keyof typeof actionPrompts];
-    if (prompt) {
-      // This would trigger a message in the chat
-      console.log('Quick action triggered:', prompt);
-      setShowQuickActions(false);
-    }
-  };
-
-  const handleSettingsChange = (newSettings: any) => {
+  const handleSettingsChange = (newSettings: Partial<SettingsType>) => {
     updateSettings.mutate(newSettings);
   };
 

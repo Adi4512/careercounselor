@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from 'react';
-import { X, Bot, Palette, Volume2, Clock, Zap } from 'lucide-react';
+import { X, Bot, Clock, Zap } from 'lucide-react';
+import { Settings } from '@/lib/trpc';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -13,7 +14,7 @@ interface SettingsModalProps {
     autoSave: boolean;
     theme: 'dark' | 'light';
   };
-  onSettingsChange: (settings: any) => void;
+  onSettingsChange: (settings: Partial<Settings>) => void;
 }
 
 export default function SettingsModal({
@@ -67,7 +68,7 @@ export default function SettingsModal({
                     name="personality"
                     value={option.value}
                     checked={localSettings.aiPersonality === option.value}
-                    onChange={(e) => setLocalSettings(prev => ({ ...prev, aiPersonality: e.target.value as any }))}
+                    onChange={(e) => setLocalSettings(prev => ({ ...prev, aiPersonality: e.target.value as 'professional' | 'friendly' | 'direct' }))}
                     className="mt-1 text-blue-600 focus:ring-blue-500"
                   />
                   <div>
@@ -99,7 +100,7 @@ export default function SettingsModal({
                     name="responseLength"
                     value={option.value}
                     checked={localSettings.responseLength === option.value}
-                    onChange={(e) => setLocalSettings(prev => ({ ...prev, responseLength: e.target.value as any }))}
+                    onChange={(e) => setLocalSettings(prev => ({ ...prev, responseLength: e.target.value as 'brief' | 'detailed' | 'comprehensive' }))}
                     className="mt-1 text-blue-600 focus:ring-blue-500"
                   />
                   <div>
