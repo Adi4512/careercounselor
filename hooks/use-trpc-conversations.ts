@@ -1,8 +1,13 @@
 import { trpc } from '@/lib/trpc-client';
 
 // tRPC hooks for conversations
-export function useConversations() {
-  return trpc.conversations.getAll.useQuery();
+export function useConversations(limit = 20) {
+  return trpc.conversations.getAll.useInfiniteQuery(
+    { limit },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    }
+  );
 }
 
 export function useConversation(id: string) {
@@ -13,8 +18,12 @@ export function useCreateConversation() {
   const utils = trpc.useUtils();
   
   return trpc.conversations.create.useMutation({
-    onSuccess: () => {
+    onSuccess: (newConversation) => {
+      // Invalidate to refetch all conversations with the new one
       utils.conversations.getAll.invalidate();
+      
+      // Also invalidate individual conversation query
+      utils.conversations.getById.invalidate({ id: newConversation.id });
     },
   });
 }

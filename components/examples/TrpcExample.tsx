@@ -7,7 +7,8 @@ export default function TrpcExample() {
   const [newTitle, setNewTitle] = useState('');
   
   // tRPC queries
-  const { data: conversations, isLoading, error } = trpc.conversations.getAll.useQuery();
+  const { data: conversationsData, isLoading, error } = trpc.conversations.getAll.useQuery();
+  const conversations = conversationsData?.items || [];
   const { data: settings } = trpc.settings.get.useQuery();
   
   // tRPC mutations
@@ -29,8 +30,6 @@ export default function TrpcExample() {
     if (newTitle.trim()) {
       createConversation.mutate({
         title: newTitle,
-        lastMessage: 'Start a new conversation...',
-        category: 'general',
       });
     }
   };
@@ -91,9 +90,8 @@ export default function TrpcExample() {
             {conversations?.map((conv) => (
               <li key={conv.id} className="p-2 bg-gray-100 rounded">
                 <div className="font-medium">{conv.title}</div>
-                <div className="text-sm text-gray-600">{conv.category}</div>
                 <div className="text-xs text-gray-500">
-                  {new Date(conv.timestamp).toLocaleString()}
+                  {new Date(conv.createdAt).toLocaleString()}
                 </div>
               </li>
             ))}

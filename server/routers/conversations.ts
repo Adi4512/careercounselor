@@ -1,21 +1,33 @@
 import { z } from 'zod';
-import { router, publicProcedure, conversationSchema, createConversationSchema, updateConversationSchema } from '@/lib/trpc';
-
-// Mock data storage (in real app, this would be a database)
-let conversations: any[] = [];
+import { router, publicProcedure, protectedProcedure, conversationSchema, createConversationSchema, updateConversationSchema } from '@/lib/trpc';
+import { prisma } from '@/lib/prisma';
 
 export const conversationsRouter = router({
   // Get all conversations
-  getAll: publicProcedure
-    .query(() => {
-      return conversations;
+  getAll: protectedProcedure
+    .input(z.object({ cursor: z.string().nullable().optional(), limit: z.number().min(1).max(50).default(20) }).optional())
+    .query(async ({ input, ctx }) => {
+      const limit = input?.limit ?? 20;
+      const cursor = input?.cursor ?? undefined;
+      const items = await prisma.conversation.findMany({
+        where: { userId: ctx.user.id }, // Only get user's conversations
+        orderBy: { createdAt: 'desc' },
+        take: limit + 1,
+        cursor: cursor ? { id: cursor } : undefined,
+      });
+      let nextCursor: string | null = null;
+      if (items.length > limit) {
+        const next = items.pop();
+        nextCursor = next?.id ?? null;
+      }
+      return { items, nextCursor };
     }),
 
   // Get conversation by ID
   getById: publicProcedure
     .input(z.object({ id: z.string() }))
-    .query(({ input }) => {
-      const conversation = conversations.find(conv => conv.id === input.id);
+    .query(async ({ input }) => {
+      const conversation = await prisma.conversation.findUnique({ where: { id: input.id } });
       if (!conversation) {
         throw new Error('Conversation not found');
       }
@@ -23,51 +35,51 @@ export const conversationsRouter = router({
     }),
 
   // Create new conversation
-  create: publicProcedure
+  create: protectedProcedure
     .input(createConversationSchema)
-    .mutation(({ input }) => {
-      const newConversation = {
-        id: Date.now().toString(),
-        ...input,
-        timestamp: new Date(),
-      };
-      conversations.unshift(newConversation);
-      return newConversation;
+    .mutation(async ({ input, ctx }) => {
+      const conversation = await prisma.conversation.create({
+        data: {
+          title: input.title,
+          userId: ctx.user.id, // Real user ID from NextAuth session
+        },
+      });
+      return conversation;
     }),
 
   // Update conversation
-  update: publicProcedure
+  update: protectedProcedure
     .input(updateConversationSchema)
-    .mutation(({ input }) => {
-      const index = conversations.findIndex(conv => conv.id === input.id);
-      if (index === -1) {
-        throw new Error('Conversation not found');
-      }
-      
-      conversations[index] = {
-        ...conversations[index],
-        ...input.updates,
-      };
-      return conversations[index];
+    .mutation(async ({ input, ctx }) => {
+      const conversation = await prisma.conversation.update({
+        where: { 
+          id: input.id,
+          userId: ctx.user.id // Ensure user owns the conversation
+        },
+        data: input.updates,
+      });
+      return conversation;
     }),
 
   // Delete conversation
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .mutation(({ input }) => {
-      const index = conversations.findIndex(conv => conv.id === input.id);
-      if (index === -1) {
-        throw new Error('Conversation not found');
-      }
-      
-      conversations.splice(index, 1);
+    .mutation(async ({ input, ctx }) => {
+      await prisma.conversation.delete({ 
+        where: { 
+          id: input.id,
+          userId: ctx.user.id // Ensure user owns the conversation
+        } 
+      });
       return { success: true };
     }),
 
   // Get conversations by category
+  // Placeholder to keep API similar; categories removed in new model
   getByCategory: publicProcedure
     .input(z.object({ category: z.enum(['career-planning', 'job-search', 'skill-development', 'general']) }))
-    .query(({ input }) => {
-      return conversations.filter(conv => conv.category === input.category);
+    .query(async () => {
+      const items = await prisma.conversation.findMany({ orderBy: { createdAt: 'desc' }, take: 50 });
+      return items;
     }),
 });

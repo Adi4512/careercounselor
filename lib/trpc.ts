@@ -1,5 +1,7 @@
 import { initTRPC } from '@trpc/server';
 import { z } from 'zod';
+import { getServerSession } from 'next-auth';
+import { prisma } from '@/lib/prisma';
 
 // Initialize tRPC
 const t = initTRPC.create();
@@ -8,27 +10,47 @@ const t = initTRPC.create();
 export const router = t.router;
 export const publicProcedure = t.procedure;
 
+// Protected procedure that requires authentication
+export const protectedProcedure = t.procedure.use(async ({ next }) => {
+  const session = await getServerSession();
+  
+  if (!session?.user?.email) {
+    throw new Error('Unauthorized - Please sign in');
+  }
+  
+  // Find or create user in database
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email }
+  });
+  
+  if (!user) {
+    throw new Error('User not found in database');
+  }
+  
+  return next({
+    ctx: {
+      user,
+      session
+    }
+  });
+});
+
 // Input validation schemas
 export const conversationSchema = z.object({
   id: z.string(),
   title: z.string(),
-  lastMessage: z.string(),
-  timestamp: z.date(),
-  category: z.enum(['career-planning', 'job-search', 'skill-development', 'general']),
+  createdAt: z.date(),
+  updatedAt: z.date(),
 });
 
 export const createConversationSchema = z.object({
   title: z.string(),
-  lastMessage: z.string(),
-  category: z.enum(['career-planning', 'job-search', 'skill-development', 'general']),
 });
 
 export const updateConversationSchema = z.object({
   id: z.string(),
   updates: z.object({
     title: z.string().optional(),
-    lastMessage: z.string().optional(),
-    category: z.enum(['career-planning', 'job-search', 'skill-development', 'general']).optional(),
   }),
 });
 
@@ -42,16 +64,16 @@ export const settingsSchema = z.object({
 
 export const messageSchema = z.object({
   id: z.string(),
-  sender: z.enum(['user', 'ai']),
+  role: z.enum(['user', 'ai']),
   content: z.string(),
-  timestamp: z.date(),
-  status: z.enum(['sending', 'sent', 'failed']),
+  createdAt: z.date(),
+  parentMessageId: z.string().nullable(),
 });
 
 export const sendMessageSchema = z.object({
   message: z.string(),
   conversationId: z.string(),
-  history: z.array(messageSchema),
+  parentMessageId: z.string().nullable().optional(),
 });
 
 // Type exports

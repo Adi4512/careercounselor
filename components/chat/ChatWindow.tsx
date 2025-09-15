@@ -1,23 +1,43 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { Message } from '@/types/chat';
-import { useSendMessage, useChatState } from '@/hooks/use-chat';
 import MessageBubble from './MessageBubble';
 import MessageInput from './MessageInput';
 import TypingIndicator from './TypingIndicator';
+import { useChatMessages, useSendMessage } from '@/hooks/use-trpc-chat';
+import { useCreateConversation } from '@/hooks/use-trpc-conversations';
 
 interface ChatWindowProps {
-  sessionId?: string;
+  conversationId: string | null;
+  onConversationCreate?: (id: string) => void;
 }
 
-export default function ChatWindow({ sessionId }: ChatWindowProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
+export default function ChatWindow({ conversationId, onConversationCreate }: ChatWindowProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Auth session
+  const { data: session } = useSession();
+  
+  // tRPC hooks - only fetch messages if we have a conversation ID
+  const { data: messagesData, refetch } = useChatMessages(
+    conversationId || 'skip', // Use 'skip' to prevent query when no conversation
+    50,
+    { enabled: !!conversationId } // Only enable query when conversationId exists
+  );
+  const sendMessage = useSendMessage();
+  const createConversation = useCreateConversation();
+  
+  // Local state for typing effect
+  const [typingContent, setTypingContent] = useState('');
+  const [isTypingResponse, setIsTypingResponse] = useState(false);
+  
+  // Flatten messages from infinite query
+  const messages = conversationId ? (messagesData?.pages.flatMap(page => page.items) || []) : [];
 
   // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = () => {
@@ -28,182 +48,136 @@ export default function ChatWindow({ sessionId }: ChatWindowProps) {
     scrollToBottom();
   }, [messages.length]);
 
-  // Add welcome message on first load
-  useEffect(() => {
-    if (messages.length === 0) {
-      const welcomeMessage: Message = {
-        id: 'welcome',
-        sender: 'ai',
-        content: "Hello! I'm your AI career counselor. I'm here to help with career guidance. What would you like to know?",
-        timestamp: new Date(),
-        status: 'sent'
-      };
-      setMessages([welcomeMessage]);
-    }
-  }, []);
-
   const handleSendMessage = async (content: string) => {
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      sender: 'user',
-      content,
-      timestamp: new Date(),
-      status: 'sending'
-    };
-
-    // Add user message immediately
-    setMessages(prev => [...prev, userMessage]);
+    let currentConversationId = conversationId;
+    
+    // Create conversation if none exists, using first message as title
+    if (!currentConversationId) {
+      try {
+        // Create title from first message (10-15 characters)
+        const titleLength = Math.min(15, Math.max(10, content.length));
+        let title = content.slice(0, titleLength);
+        
+        // If we cut off mid-word, find the last complete word
+        if (content.length > titleLength) {
+          const lastSpaceIndex = title.lastIndexOf(' ');
+          if (lastSpaceIndex > 8) { // Keep at least 8 chars
+            title = title.slice(0, lastSpaceIndex);
+          }
+          title += '...';
+        }
+        
+        const newConversation = await createConversation.mutateAsync({ title });
+        currentConversationId = newConversation.id;
+        onConversationCreate?.(newConversation.id);
+      } catch (error) {
+        console.error('Failed to create conversation:', error);
+        return;
+      }
+    }
+    
     setIsLoading(true);
     setIsThinking(true);
-    setIsTyping(false);
-
-    // Create AI message placeholder
-    const aiMessageId = (Date.now() + 1).toString();
-    const aiMessage: Message = {
-      id: aiMessageId,
-      sender: 'ai',
-      content: '',
-      timestamp: new Date(),
-      status: 'sending'
-    };
-
-    // Add AI message placeholder
-    setMessages(prev => [...prev, aiMessage]);
-
+    
     try {
-      const response = await fetch('/api/chat/stream', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: content,
-          history: messages
-        }),
+      setIsTypingResponse(true);
+      setTypingContent('');
+      
+      // Send message and get response
+      const response = await sendMessage.mutateAsync({
+        message: content,
+        conversationId: currentConversationId,
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to send message');
+      
+      // Get the response content but don't show it yet
+      const fullResponse = response.aiMessage.content;
+      
+      // Clear the response from database temporarily by not refetching yet
+      // Simulate typing effect by revealing the response gradually
+      const words = fullResponse.split(' ');
+      
+      for (let i = 0; i < words.length; i++) {
+        setTypingContent(prev => prev + (i > 0 ? ' ' : '') + words[i]);
+        await new Promise(resolve => setTimeout(resolve, 100)); // 100ms delay between words
       }
-
-      // Update user message status
-      setMessages(prev => 
-        prev.map(msg => 
-          msg.id === userMessage.id 
-            ? { ...msg, status: 'sent' as const }
-            : msg
-        )
-      );
-
-      // Handle streaming response
-      const reader = response.body?.getReader();
-      if (!reader) {
-        throw new Error('No response body');
-      }
-
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            try {
-              const data = JSON.parse(line.slice(6));
-              
-               if (data.type === 'chunk') {
-                 // Switch from thinking to typing when AI starts responding
-                 if (isThinking) {
-                   setIsThinking(false);
-                   setIsTyping(true);
-                 }
-                 // Update AI message with new content
-                 setMessages(prev => 
-                   prev.map(msg => 
-                     msg.id === aiMessageId 
-                       ? { ...msg, content: msg.content + data.content }
-                       : msg
-                   )
-                 );
-              } else if (data.type === 'done') {
-                // Mark AI message as complete
-                setMessages(prev => 
-                  prev.map(msg => 
-                    msg.id === aiMessageId 
-                      ? { ...msg, status: 'sent' as const }
-                      : msg
-                  )
-                );
-              } else if (data.type === 'error') {
-                // Handle error
-                setMessages(prev => 
-                  prev.map(msg => 
-                    msg.id === aiMessageId 
-                      ? { ...msg, content: data.content, status: 'sent' as const }
-                      : msg
-                  )
-                );
-              }
-            } catch (e) {
-              // Ignore parsing errors
-              console.error('Parsing error:', e);
-
-            }
-          }
-        }
-      }
-
+      
+      // Clear typing state and show the final message
+      setIsTypingResponse(false);
+      setTypingContent('');
+      refetch();
+      
     } catch (error) {
       console.error('Error sending message:', error);
-      
-      // Update user message status to failed
-      setMessages(prev => 
-        prev.map(msg => 
-          msg.id === userMessage.id 
-            ? { ...msg, status: 'failed' as const }
-            : msg
-        )
-      );
-
-      // Update AI message with error
-      setMessages(prev => 
-        prev.map(msg => 
-          msg.id === aiMessageId 
-            ? { ...msg, content: "I apologize, but I'm having trouble responding right now. Please try again in a moment.", status: 'sent' as const }
-            : msg
-        )
-      );
+      setIsTypingResponse(false);
+      setTypingContent('');
     } finally {
       setIsLoading(false);
       setIsThinking(false);
       setIsTyping(false);
+      // Don't clear typing state here - let the typing completion handle it
     }
   };
 
+  // Convert database messages to UI format
+  const uiMessages = messages.map(msg => ({
+    id: msg.id,
+    sender: msg.role as 'user' | 'ai',
+    content: msg.content,
+    timestamp: new Date(msg.createdAt),
+    status: 'sent' as const
+  }));
+  
+  // Check if we have a temporary AI message (thinking state)
+  const hasThinkingMessage = messages.some(msg => 
+    msg.id.startsWith('temp-ai-') && msg.content === '...'
+  );
+  
   return (
-    <div className="flex flex-col h-full flex-1">
+    <div className="flex flex-col h-full w-full">
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-0 bg-[#212121]">
-        {messages.map((message) => (
+      <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-0 bg-[#212121] w-full">
+        {uiMessages.length === 0 && (
+          <div className="text-center py-8">
+            <div className="text-gray-400 mb-2">
+            ✨ Salve <span className="font-semibold text-gray-300">{session?.user?.name ? `, ${session.user.name.split(' ')[0]}` : ''}</span>!
+            </div>
+            <div className="text-gray-300">Ready to plan your career journey? Let's start the conversation.</div>
+          </div>
+        )}
+        {uiMessages.filter(msg => {
+          // Hide temp messages
+          if (msg.id.startsWith('temp-ai-') && msg.content === '...') return false;
+          // Hide the most recent AI message while typing (the one being replaced by typing effect)
+          if (isTypingResponse && msg.sender === 'ai' && msg === uiMessages[uiMessages.length - 1]) return false;
+          return true;
+        }).map((message) => (
           <MessageBubble key={message.id} message={message} />
         ))}
-        {isThinking && <TypingIndicator isThinking={true} />}
+        {isTypingResponse && typingContent && (
+          <div className="flex justify-start">
+            <div className="bg-[#303030] rounded-lg p-3 max-w-xs lg:max-w-md">
+              <p className="text-white text-sm">{typingContent}</p>
+              <div className="flex items-center mt-2">
+                <div className="flex space-x-1">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {(isThinking || hasThinkingMessage || sendMessage.isPending) && <TypingIndicator isThinking={true} />}
         {isTyping && <TypingIndicator isThinking={false} />}
         <div ref={messagesEndRef} />
       </div>
 
       {/* Message Input */}
-      <div className="flex-shrink-0 p-4" style={{ backgroundColor:"#212121"  }}>
+      <div className="flex-shrink-0 p-4 w-full bg-[#212121]">
         <MessageInput
           onSendMessage={handleSendMessage}
-          disabled={isLoading}
-          placeholder="Let’s figure out your next step — ask me anything…"
+          disabled={isLoading || sendMessage.isPending}
+          placeholder="Let's figure out your next step — ask me anything…"
         />
       </div>
     </div>

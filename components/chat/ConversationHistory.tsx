@@ -6,9 +6,9 @@ import { MessageSquare, Clock, Trash2, Edit3 } from 'lucide-react';
 interface Conversation {
   id: string;
   title: string;
-  lastMessage: string;
-  timestamp: Date;
-  category: 'career-planning' | 'job-search' | 'skill-development' | 'general';
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  userId: string;
 }
 
 interface ConversationHistoryProps {
@@ -19,19 +19,7 @@ interface ConversationHistoryProps {
   activeConversationId?: string;
 }
 
-const categoryIcons = {
-  'career-planning': '🎯',
-  'job-search': '💼',
-  'skill-development': '📚',
-  'general': '💬'
-};
-
-const categoryLabels = {
-  'career-planning': 'Career Planning',
-  'job-search': 'Job Search',
-  'skill-development': 'Skill Development',
-  'general': 'General'
-};
+// Removed category-related constants since categories are no longer in the schema
 
 export default function ConversationHistory({
   conversations,
@@ -98,9 +86,7 @@ export default function ConversationHistory({
             <div className="flex items-start justify-between">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm">
-                    {categoryIcons[conversation.category]}
-                  </span>
+                  <span className="text-sm">💬</span>
                   {editingId === conversation.id ? (
                     <input
                       value={editTitle}
@@ -120,14 +106,9 @@ export default function ConversationHistory({
                     </h4>
                   )}
                 </div>
-                <p className="text-xs text-gray-500 truncate mb-1">
-                  {conversation.lastMessage}
-                </p>
                 <div className="flex items-center gap-2 text-xs text-gray-600">
                   <Clock className="w-3 h-3" />
-                  <span>{formatTime(conversation.timestamp)}</span>
-                  <span className="text-gray-700">•</span>
-                  <span>{categoryLabels[conversation.category]}</span>
+                  <span>{formatTime(conversation.createdAt)}</span>
                 </div>
               </div>
               

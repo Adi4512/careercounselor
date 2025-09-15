@@ -4,6 +4,7 @@ import { NavbarComponent } from "@/components/NavbarComponent";
 import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 export const Hero = () => {
   const { data: session } = useSession();
   const router = useRouter();
@@ -23,14 +24,14 @@ export const Hero = () => {
     <div className="h-screen bg-[#01030F] text-white relative overflow-hidden">
       {/* Background Stars */}
       <div className="absolute top-20 right-40 ">
-        <img src="/Stars.webp" alt="stars" className="w-[500px] h-[500px] " />
+        <Image src="/Stars.webp" alt="stars" width={500} height={500} className="w-[500px] h-[500px]" />
       </div>
       <div className="absolute top-45 left-45 opacity-20">
-        <img src="/Stars.webp" alt="stars" className="w-[300px] h-[400px] " />
+        <Image src="/Stars.webp" alt="stars" width={300} height={400} className="w-[300px] h-[400px]" />
       </div>
       <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-0">
         <div className="relative">
-          <img src="/Elements.webp" alt="Elements" className="w-[500px] h-auto" />
+          <Image src="/Elements.webp" alt="Elements" width={500} height={500} className="w-[500px] h-auto" />
           {/* Top fade mask - fades to transparent */}
           <div className="absolute top-20 left-0 right-0 h-52 bg-gradient-to-b from-[#01030F] to-transparent pointer-events-none mix-blend-multiply"></div>
           {/* Bottom fade mask - fades to transparent */}
@@ -40,7 +41,7 @@ export const Hero = () => {
         
       {/* Gradient at bottom left */}
       <div className="absolute bottom-0 left-0 z-0">
-        <img src="/Gradient.webp" alt="Gradient" className="w-auto h-auto" />
+        <Image src="/Gradient.webp" alt="Gradient" width={400} height={400} className="w-auto h-auto" />
       </div>
         
       {/* Navigation Bar */}
@@ -63,9 +64,11 @@ export const Hero = () => {
   <span className="block text-white">Transform Your
   </span>
   <span className=" mt-2 text-gray-300 relative inline-block">
-    <img
+    <Image
       src="/TextGlow.webp"
       alt="Text Glow"
+      width={500}
+      height={300}
       className="absolute top-1/2 left-[40%] transform -translate-x-1/2 -translate-y-1/2 opacity-90 brightness-150 contrast-125 w-[500px] h-[300px] pointer-events-none -z-10"
     />
      Career with AI
@@ -96,18 +99,22 @@ export const Hero = () => {
           <div className="relative   flex items-center justify-center">
             {/* Background Glow Effects - Behind the model */}
             <div className="absolute inset-0 z-10 flex items-center justify-center">
-              <img 
+              <Image 
                 src="/ModelGlow.webp" 
                 alt="AI Glow Effect" 
+                width={800}
+                height={900}
                 className="w-[800px] h-[900px] object-contain opacity-90" 
               />
             </div>
             
             {/* AI Model Image */}
             <div className="relative z-20">
-              <img 
+              <Image 
                 src="/AImodel.webp" 
                 alt="Elevare AI" 
+                width={700}
+                height={800}
                 className="w-[700px] h-[800px] object-contain" 
               />
             </div>
