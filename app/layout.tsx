@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SessionWrapper  from "@/components/SessionWrapper";
 import Providers from "@/lib/providers";
+import { Analytics } from "@vercel/analytics/next"
 
 
 
@@ -41,7 +42,7 @@ export default function RootLayout({
         <Providers>
           <SessionWrapper>
             {children}
-           
+            <Analytics />
           </SessionWrapper>
         </Providers>
       </body>

@@ -86,7 +86,7 @@
 
 ### 🎬 **Product Demo**
 
-[![Watch the Demo](./public/AImodel.webp)](https://www.youtube.com/watch?v=_HZM0QiuUS8)
+[![Watch the Demo](./public/landingpage.webp.webp)](https://youtu.be/Bl6RP6xPgyE)
 
 *Click to watch the full product demonstration*
 

@@ -240,7 +240,7 @@ export default function ChatPage() {
                 </button>
               </div>
               
-              <div className="flex items-center space-x-2 relative dropdown-container">
+              <div className="flex items-center space-x-2 relative dropdown-container ml-auto">
                 <button 
                   onClick={() => setShowDropdown(!showDropdown)}
                   className="p-2 text-gray-400 hover:text-white hover:bg-[#303030] rounded-lg transition-colors"

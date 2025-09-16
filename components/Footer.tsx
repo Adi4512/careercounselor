@@ -96,7 +96,7 @@ export const Footer = () => {
       {/* Bottom section with brand text */}
       <div className="w-full flex items-center justify-center mt-8">
         <div className="w-full px-6 flex items-center justify-center">
-          <h1 className="text-6xl sm:text-8xl md:text-[120px] lg:text-[200px] xl:text-[300px] font-bold text-[#FFFFE3] leading-none">
+          <h1 className="h-80 text-6xl sm:text-8xl md:text-[120px] lg:text-[200px] xl:text-[270px] font-bold text-[#FFFFE3] leading-none">
             Elevare AI
           </h1>
         </div>
