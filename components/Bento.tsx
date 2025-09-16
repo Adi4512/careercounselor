@@ -1,28 +1,348 @@
-export const Bento = () => {
+import { cn } from "@/lib/utils";
+import {
+  IconBrain,
+  IconFileText,
+  IconMessageCircle,
+  IconTrendingUp,
+  IconUsers,
+  IconTarget,
+  IconBulb,
+  IconStar,
+} from "@tabler/icons-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Check, Star } from "lucide-react";
+import Link from "next/link";
+import { Footer } from "@/components/Footer";
+
+export function Bento() {
+  const features = [
+    {
+      title: "AI Career Counselor",
+      description:
+        "Get personalized career guidance powered by advanced AI that understands your unique background and goals.",
+      icon: <IconBrain />,
+    },
+    {
+      title: "Resume Analysis",
+      description:
+        "Instant feedback on your resume with AI-powered analysis and optimization tips to stand out.",
+      icon: <IconFileText />,
+    },
+    {
+      title: "Interview Preparation",
+      description:
+        "Practice with AI-powered mock interviews tailored to your target role and industry.",
+      icon: <IconMessageCircle />,
+    },
+    {
+      title: "Salary Negotiation",
+      description: "Learn proven negotiation strategies and get market insights to maximize your earning potential.",
+      icon: <IconTrendingUp />,
+    },
+    {
+      title: "Skill Gap Analysis",
+      description: "Identify skill gaps and get personalized learning recommendations for your career goals.",
+      icon: <IconTarget />,
+    },
+    {
+      title: "Network Strategy",
+      description:
+        "Build meaningful professional connections with AI-guided networking strategies and tips.",
+      icon: <IconUsers />,
+    },
+    {
+      title: "Career Roadmapping",
+      description:
+        "Get a clear, actionable roadmap from where you are to where you want to be in your career.",
+      icon: <IconBulb />,
+    },
+    {
+      title: "Success Tracking",
+      description: "Monitor your progress and celebrate milestones as you advance in your professional journey.",
+      icon: <IconStar />,
+    },
+  ];
+  
   return (
-    <div className="flex flex-col gap-4 text-white">
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-    <div>Bento</div>
-   Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
-   Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sequi, repudiandae harum deleniti atque incidunt repellat voluptatum maxime. Aliquid ab laborum praesentium necessitatibus adipisci at, reiciendis fugiat recusandae, illum tempore quos dicta quo nihil hic aut excepturi sunt ea corporis deserunt quod sed inventore dignissimos soluta! Soluta maiores mollitia sapiente dolor! Eum, omnis repellat alias aliquam quibusdam voluptas sequi tempora, fugiat hic in facere, tenetur vitae et sit facilis incidunt iusto asperiores magnam! Possimus ab harum tenetur aliquam numquam, ut est quidem! Exercitationem totam officiis atque iste sed minima quasi commodi minus dignissimos sint, tempore cumque dolorem aut, consequatur ullam veritatis eaque necessitatibus facilis maxime labore temporibus odio, reiciendis fugiat id. Eius, non iusto, iste illo repellendus rem impedit totam dignissimos nobis exercitationem quis officiis ab consequatur quibusdam magni alias nesciunt blanditiis aliquam aperiam cum fugiat sint hic? Maiores, sint dolor tempore debitis repellendus nihil velit eveniet magni, voluptatum eos impedit, reprehenderit et molestiae corrupti nulla laudantium cupiditate? Recusandae reiciendis nihil, illum unde dolore ratione blanditiis, delectus sed ducimus molestias rerum excepturi ipsam temporibus ipsum autem eius odio itaque minus fugiat harum aspernatur cum! Suscipit assumenda reiciendis excepturi vitae nam nulla, ab doloribus pariatur aspernatur enim laudantium beatae, iusto, nisi quia totam quod officia? Aspernatur similique optio eum excepturi enim facilis officiis, autem dignissimos consequuntur nobis eveniet expedita deleniti! Hic qui maxime, quo, quos quas nulla consequatur modi, nostrum accusamus architecto officiis ratione reiciendis id! Quidem ea, eos sapiente debitis vero officiis totam fugiat perspiciatis ducimus nisi magni possimus, officia, adipisci cum. Aliquid aspernatur mollitia sequi autem? Dolorem reiciendis rem iure ipsam velit qui facilis doloremque molestiae aliquam, natus asperiores, temporibus, voluptas expedita possimus ullam aliquid debitis! Architecto maiores quis non debitis voluptas, quo eius nisi ducimus. Facere, nam, similique quas aliquam nobis nesciunt voluptatum ipsa eveniet ratione placeat dolore sequi doloribus eius. Ipsam provident, voluptate corrupti modi ducimus harum velit assumenda odio vero alias officia, est, reiciendis voluptatum. Explicabo possimus dicta voluptate odit fugiat reprehenderit repellat dolores ipsam iure qui numquam eligendi deleniti earum dolorem, provident error? Consectetur eaque exercitationem quaerat error saepe eum vitae earum eveniet incidunt, soluta voluptatum blanditiis adipisci rerum quod tempora est quibusdam et aspernatur iste mollitia sapiente eius ratione laudantium. Ipsum recusandae ipsam dolorum at. Dolores pariatur ratione praesentium nihil sunt animi ducimus culpa. Blanditiis debitis distinctio vel, fuga inventore fugiat nisi. Quam adipisci dignissimos, dolorum quas magnam deleniti ratione explicabo. Consequatur nemo omnis sapiente deserunt quibusdam eligendi hic eos, perspiciatis deleniti, repudiandae ut molestias eveniet. Magni tempore fugiat repudiandae. Libero eum accusantium omnis laborum molestias tempore officia quas harum corporis, beatae dicta cumque molestiae sint, consectetur reiciendis eaque quis quo magnam temporibus animi aspernatur saepe. Saepe esse iure fugit voluptatem ratione? Quas ipsam, expedita quos distinctio beatae voluptatum blanditiis delectus, deserunt vero provident illum omnis nulla sed unde aspernatur earum architecto temporibus? Cum consequuntur rerum deserunt necessitatibus velit doloremque atque similique aut facere maiores, ipsam, ducimus mollitia et. Voluptatem iure repudiandae soluta quod et alias repellat facere quas odit aspernatur reprehenderit quisquam, veritatis, ab libero adipisci laudantium magnam delectus error, nihil in eius. Distinctio similique sapiente ea! Voluptatibus facilis dignissimos cumque placeat quo explicabo accusamus id. Eligendi quo nesciunt asperiores rem animi rerum vel itaque hic enim esse, error deserunt dolores possimus tempora eius expedita ullam ad provident maxime accusantium earum at? Doloremque eveniet eum, ex corrupti aperiam molestias aliquam optio eaque odit suscipit reiciendis veritatis ea! Sint earum ea quod error. Pariatur, illo. Iste eos nemo at facilis, consequatur expedita magni ea officiis ducimus delectus cumque saepe suscipit numquam quae molestias ad non consequuntur et aliquam corrupti ipsum laboriosam maiores. Ea repellendus in, dolor commodi iste, saepe iusto aut eius, ad quos blanditiis dolorem. Exercitationem dicta eius fugit laboriosam maxime quod aut voluptatem quo atque nisi, voluptatibus facere in, deleniti non expedita. Voluptas neque voluptatibus reprehenderit ducimus assumenda in fuga pariatur obcaecati nesciunt. Consequuntur, itaque rem eos vitae quibusdam at vel alias eveniet. Delectus laudantium facere assumenda voluptate inventore voluptates aperiam iure at quas nisi. Laborum illo eaque fugit aut nisi doloribus nemo dolor temporibus facere consectetur provident omnis, ratione possimus unde voluptatem sapiente id saepe dolores, nulla consequuntur! Sequi, mollitia magnam aliquam soluta numquam molestias voluptatem. A quae at voluptate animi maxime perspiciatis dolorem enim, provident harum asperiores veniam consequuntur rem, corrupti illum aliquam ullam est alias id ducimus fuga voluptates facilis! Reprehenderit tempora ab quasi, blanditiis deserunt saepe possimus laudantium quas. Nostrum quidem, quibusdam voluptate hic aut expedita explicabo, est et consequatur veniam nemo totam distinctio cum asperiores ut! Ipsa minima nemo ex ut iste vel ea? Quibusdam itaque harum nisi dolores vel deserunt veritatis natus temporibus facere velit eveniet pariatur ipsam, neque corrupti ipsum minima iste quasi id, earum eaque aperiam! Pariatur sequi architecto obcaecati corrupti deserunt! Nostrum quo voluptatibus tenetur ratione cumque aut quae, pariatur fugit et rerum eius eaque unde dolore veritatis numquam exercitationem perferendis non ipsum optio omnis nulla repellat. Ullam, veritatis. Alias magni earum accusantium. Vel quia officiis cum totam aliquam accusantium omnis perferendis ratione sit itaque impedit deserunt aliquid facilis soluta earum magni possimus ipsam porro debitis, amet nulla? Sit minus ab at sequi quas aliquid earum expedita iure dolorum, eligendi velit aut voluptatibus, temporibus facere excepturi amet necessitatibus totam. Fugit, placeat quo. Amet veritatis maxime ad ea quibusdam libero dolores, nobis eos voluptatum explicabo eveniet provident nemo velit nam delectus, culpa iusto. Dolore doloremque vero officiis! Magni nostrum, amet praesentium reprehenderit tenetur quidem eaque sit nihil velit, at minus vero sed cupiditate itaque similique molestiae modi excepturi sequi! Ipsam eveniet ducimus autem quisquam, dicta aliquam quasi expedita modi error perspiciatis molestias nulla vel debitis cupiditate nemo vero, id odit inventore iure aut aliquid ab corrupti. Ipsum aspernatur voluptate ut, recusandae accusamus quod quo reprehenderit deleniti expedita consectetur aperiam consequuntur nesciunt magni ad possimus laboriosam modi, facilis aut deserunt vero cupiditate. Cumque accusantium tempora id, qui, cum magnam reiciendis harum, fugit autem sapiente nemo repudiandae sint sequi vitae ut eaque magni sunt deserunt atque! Quam cupiditate illo explicabo reiciendis sequi sit in neque assumenda tempore.
+    <div className="bg-[#01030F] text-white">
+      {/* Features Section */}
+      <div className="pt-20 pb-10">
+        {/* Section Header */}
+        <div className="text-center mb-16 max-w-4xl mx-auto px-8">
+          <div className="inline-flex items-center gap-2 px-6 py-3 bg-black/80 backdrop-blur-sm rounded-full text-sm font-medium mb-8 border border-gray-600/50 w-fit shadow-lg mx-auto">
+            <div className="w-2 h-2 bg-[#10a37f] rounded-full animate-pulse"></div>
+            <span className="text-white">Comprehensive Career Tools</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            Everything You Need for
+            <span className="block text-gray-300 mt-2">Career Success</span>
+          </h2>
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            AI-powered tools designed to accelerate your professional growth and unlock new opportunities.
+          </p>
+        </div>
+
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 relative z-10 py-10 max-w-7xl mx-auto">
+          {features.map((feature, index) => (
+            <Feature key={feature.title} {...feature} index={index} />
+          ))}
+        </div>
+      </div>
+
+      {/* Pricing Section */}
+      <div className="py-20 px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Simple, Transparent
+              <span className="block text-gray-300 mt-2">Pricing</span>
+            </h2>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Choose the plan that fits your career journey. Start free, upgrade when ready.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Free Plan */}
+            <Card className="bg-[#1a1a1a] border-gray-800 hover:border-gray-600 transition-colors">
+              <CardContent className="p-8 text-center">
+                <h3 className="text-2xl font-bold text-white mb-2">Free</h3>
+                <p className="text-gray-400 mb-6">Perfect for getting started</p>
+                <div className="mb-6">
+                  <span className="text-4xl font-bold text-white">$0</span>
+                  <span className="text-gray-400">/month</span>
+                </div>
+                <div className="space-y-3 mb-8">
+                  <div className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-green-400" />
+                    <span className="text-gray-300">5 conversations per day</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-green-400" />
+                    <span className="text-gray-300">Basic career guidance</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-green-400" />
+                    <span className="text-gray-300">Resume review tips</span>
+                  </div>
+                </div>
+                <Link href="/chat">
+                  <Button className="w-full bg-gray-700 hover:bg-gray-600 text-white">
+                    Get Started
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Pro Plan */}
+            <Card className="bg-[#1a1a1a] border-[#10a37f] hover:border-[#0d8a6b] transition-colors relative">
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <div className="bg-[#10a37f] text-white px-4 py-1 rounded-full text-sm font-medium">
+                  Most Popular
+                </div>
+              </div>
+              <CardContent className="p-8 text-center pt-12">
+                <h3 className="text-2xl font-bold text-white mb-2">Pro</h3>
+                <p className="text-gray-400 mb-6">For serious career growth</p>
+                <div className="mb-6">
+                  <span className="text-4xl font-bold text-white">$29</span>
+                  <span className="text-gray-400">/month</span>
+                </div>
+                <div className="space-y-3 mb-8">
+                  <div className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-green-400" />
+                    <span className="text-gray-300">Unlimited conversations</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-green-400" />
+                    <span className="text-gray-300">Advanced AI insights</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-green-400" />
+                    <span className="text-gray-300">Interview preparation</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-green-400" />
+                    <span className="text-gray-300">Priority support</span>
+                  </div>
+                </div>
+                <Link href="/chat">
+                  <Button className="w-full bg-[#10a37f] hover:bg-[#0d8a6b] text-white">
+                    Start Free Trial
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Enterprise Plan */}
+            <Card className="bg-[#1a1a1a] border-gray-800 hover:border-gray-600 transition-colors">
+              <CardContent className="p-8 text-center">
+                <h3 className="text-2xl font-bold text-white mb-2">Enterprise</h3>
+                <p className="text-gray-400 mb-6">For teams and organizations</p>
+                <div className="mb-6">
+                  <span className="text-4xl font-bold text-white">Custom</span>
+                </div>
+                <div className="space-y-3 mb-8">
+                  <div className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-green-400" />
+                    <span className="text-gray-300">Everything in Pro</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-green-400" />
+                    <span className="text-gray-300">Team collaboration</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-green-400" />
+                    <span className="text-gray-300">Custom integrations</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-green-400" />
+                    <span className="text-gray-300">Dedicated support</span>
+                  </div>
+                </div>
+                <Button className="w-full bg-gray-700 hover:bg-gray-600 text-white">
+                  Contact Sales
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+
+      {/* Testimonials Section */}
+      <div className="py-20 px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              What Our Users
+              <span className="block text-gray-300 mt-2">Are Saying</span>
+            </h2>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Join thousands of professionals who have transformed their careers with Elevare AI.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card className="bg-[#1a1a1a] border-gray-800 hover:border-gray-600 transition-colors">
+              <CardContent className="p-6">
+                <div className="flex items-center mb-4">
+                  <div className="text-4xl mr-4">👩‍💻</div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">Sarah Johnson</h3>
+                    <p className="text-gray-400 text-sm">Software Engineer at Google</p>
+                  </div>
+                </div>
+                <div className="flex items-center mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+                  ))}
+                </div>
+                <p className="text-gray-300 italic">
+                  "Elevare AI helped me transition from junior to senior role in just 8 months. The personalized roadmap was exactly what I needed."
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-[#1a1a1a] border-gray-800 hover:border-gray-600 transition-colors">
+              <CardContent className="p-6">
+                <div className="flex items-center mb-4">
+                  <div className="text-4xl mr-4">👨‍💼</div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">Michael Chen</h3>
+                    <p className="text-gray-400 text-sm">Product Manager at Microsoft</p>
+                  </div>
+                </div>
+                <div className="flex items-center mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+                  ))}
+                </div>
+                <p className="text-gray-300 italic">
+                  "The AI's insights about market opportunities opened doors I never knew existed. Career growth has never been clearer."
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-[#1a1a1a] border-gray-800 hover:border-gray-600 transition-colors">
+              <CardContent className="p-6">
+                <div className="flex items-center mb-4">
+                  <div className="text-4xl mr-4">👩‍🎨</div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">Emily Rodriguez</h3>
+                    <p className="text-gray-400 text-sm">UX Designer at Figma</p>
+                  </div>
+                </div>
+                <div className="flex items-center mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+                  ))}
+                </div>
+                <p className="text-gray-300 italic">
+                  "The interview prep feature is incredible. I landed my dream job at Figma after using the AI's mock interviews."
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* CTA */}
+          <div className="text-center mt-16">
+            <Link href="/chat">
+              <Button className="bg-[#10a37f] hover:bg-[#0d8a6b] text-white px-8 py-4 text-lg">
+                Start Your Career Transformation
+              </Button>
+            </Link>
+            <p className="text-gray-400 text-sm mt-4">
+              Free to start • No credit card required
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      
     </div>
-  )
+  );
 }
+
+const Feature = ({
+  title,
+  description,
+  icon,
+  index,
+}: {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  index: number;
+}) => {
+  return (
+    <div
+      className={cn(
+        "flex flex-col lg:border-r  py-10 relative group/feature dark:border-neutral-800",
+        (index === 0 || index === 4) && "lg:border-l dark:border-neutral-800",
+        index < 4 && "lg:border-b dark:border-neutral-800"
+      )}
+    >
+      {index < 4 && (
+        <div className="opacity-0 group-hover/feature:opacity-100 transition duration-200 absolute inset-0 h-full w-full bg-gradient-to-t from-neutral-100 dark:from-neutral-800 to-transparent pointer-events-none" />
+      )}
+      {index >= 4 && (
+        <div className="opacity-0 group-hover/feature:opacity-100 transition duration-200 absolute inset-0 h-full w-full bg-gradient-to-b from-neutral-100 dark:from-neutral-800 to-transparent pointer-events-none" />
+      )}
+      <div className="mb-4 relative z-10 px-10 text-neutral-600 dark:text-neutral-400">
+        {icon}
+      </div>
+      <div className="text-lg font-bold mb-2 relative z-10 px-10">
+        <div className="absolute left-0 inset-y-0 h-6 group-hover/feature:h-8 w-1 rounded-tr-full rounded-br-full bg-neutral-300 dark:bg-neutral-700 group-hover/feature:bg-blue-500 transition-all duration-200 origin-center" />
+        <span className="group-hover/feature:translate-x-2 transition duration-200 inline-block text-neutral-800 dark:text-neutral-100">
+          {title}
+        </span>
+      </div>
+      <p className="text-sm text-neutral-600 dark:text-neutral-300 max-w-xs relative z-10 px-10">
+        {description}
+      </p>
+    </div>
+  );
+};

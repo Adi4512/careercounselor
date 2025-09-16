@@ -6,6 +6,7 @@ import Providers from "@/lib/providers";
 
 
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -35,11 +36,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased pb-32`}
       >
         <Providers>
           <SessionWrapper>
             {children}
+           
           </SessionWrapper>
         </Providers>
       </body>

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/resizable-navbar";
 import { useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 
 export function NavbarComponent() {
   const { data: session } = useSession();
@@ -51,19 +52,19 @@ export function NavbarComponent() {
   const navItems = [
     {
       name: "Home",
-      link: "#home",
+      link: "/",
     },
     {
       name: "Pricing",
-      link: "#pricing",
+      link: "/pricing",
     },
     {
       name: "About",
-      link: "#about",
+      link: "/about",
     },  
     {
       name: "Testimonials",
-      link: "#testimonials",
+      link: "/testimonials",
     }
   ];
 
@@ -116,14 +117,14 @@ export function NavbarComponent() {
             onClose={() => setIsMobileMenuOpen(false)}
           >
             {navItems.map((item, idx) => (
-              <a
+              <Link
                 key={`mobile-link-${idx}`}
                 href={item.link}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="relative text-white hover:text-gray-300"
               >
                 <span className="block">{item.name}</span>
-              </a>
+              </Link>
             ))}
             <div className="flex w-full flex-col gap-4">
               {session ? (

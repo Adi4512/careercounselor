@@ -4,14 +4,21 @@ import { NavbarComponent } from "@/components/NavbarComponent";
 import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import Image from "next/image";
 export const Hero = () => {
   const { data: session } = useSession();
   const router = useRouter();
+  const [isOpening, setIsOpening] = useState(false);
 
-  const handleGetStarted = () => {
+  const handleGetStarted = async () => {
     if (session) {
-      router.push('/chat');
+      try {
+        setIsOpening(true);
+        await router.push('/chat');
+      } finally {
+        // Keep the loading state until route transition completes (Next will replace the page)
+      }
     } else {
       // If not signed in, the navbar will handle the sign-in flow
       // which will redirect to chat after successful authentication
@@ -85,10 +92,10 @@ export const Hero = () => {
           {/* Get Started Button */}
           <div className="flex justify-start">
             <InteractiveHoverButton 
-              className="text-lg px-8 py-5 dark"
+              className={`text-lg px-8 py-3 dark ${isOpening ? 'pointer-events-none opacity-80' : ''}`}
               onClick={handleGetStarted}
             >
-              {session ? "Start Chatting" : "Unlock Your Future"}
+              {session ? (isOpening ? 'Opening chat…' : 'Start Chatting') : 'Unlock Your Future'}
             </InteractiveHoverButton>
           </div>
         </div>

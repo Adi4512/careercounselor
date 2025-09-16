@@ -2,6 +2,7 @@
 
 import { Hero } from "@/components/Hero";
 import { Bento } from "@/components/Bento";
+import { Footer } from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -9,6 +10,9 @@ export default function Home() {
       <Hero />
       <div className="w-full max-w-7xl mx-auto px-6 py-16">
         <Bento />
+      </div>
+       <div className=" flex-grow">
+      <Footer />
       </div>
     </div>
   );

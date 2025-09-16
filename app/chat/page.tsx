@@ -3,7 +3,6 @@
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { useConversations, useCreateConversation, useUpdateConversation, useDeleteConversation } from '@/hooks/use-trpc-conversations';
 import { useSettings, useUpdateSettings, Settings as SettingsType } from '@/hooks/use-trpc-settings';
 import { 
@@ -129,7 +128,9 @@ export default function ChatPage() {
                 className="flex items-center gap-2 hover:bg-[#303030] rounded-lg transition-opacity w-full text-left"
               >
                 <div className="flex h-9 w-8 items-center justify-center rounded-lg">
-                  <Image src="/logo.png" alt="Logo" width={24} height={24} className="h-6 w-6" />
+                  <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                    <div className="w-4 h-4 bg-[#181818] rounded-full"></div>
+                  </div>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-sm font-semibold text-gray-200">AI Career Counselor</span>
