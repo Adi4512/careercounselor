@@ -17,6 +17,8 @@
 
 </div>
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-blue?style=for-the-badge&logo=vercel)](https://careercounselor-blue.vercel.app)
+
 ---
 
 ## 📋 Table of Contents
@@ -86,7 +88,7 @@
 
 ### 🎬 **Product Demo**
 
-[![Watch the Demo](./public/landingpage.webp.webp)](https://youtu.be/Bl6RP6xPgyE)
+[![Watch the Demo](./public/landingpage.webp)](https://youtu.be/Bl6RP6xPgyE)
 
 *Click to watch the full product demonstration*
 
