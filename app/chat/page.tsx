@@ -44,6 +44,7 @@ export default function ChatPage() {
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showMobileConversations, setShowMobileConversations] = useState(false);
 
   useEffect(() => {
     if (status === 'loading') return; // Still loading
@@ -119,9 +120,9 @@ export default function ChatPage() {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-[#212121] m-0 p-0">
-        {/* Fixed Sidebar - Leftmost */}
-        <div className="w-64 flex-shrink-0">
-          <Sidebar className="h-full dark border-r-0 w-[15%]">
+        {/* Fixed Sidebar - Leftmost - Hidden on mobile */}
+        <div className="hidden lg:block w-64 flex-shrink-0">
+          <Sidebar className="h-full dark border-r-0 w-64">
             <SidebarHeader className="bg-[#181818] p-4">
               <button 
                 onClick={() => router.push('/')}
@@ -201,11 +202,44 @@ export default function ChatPage() {
         </div>
 
         {/* Chat Window - Takes remaining space to rightmost edge */}
-        <div className="flex-1 flex flex-col min-h-screen max-w-full">
+        <div className="flex-1 flex flex-col min-h-screen max-w-full lg:ml-0">
           {/* Chat Content */}
           <div className="flex-1 overflow-hidden flex flex-col bg-[#212121]">
             {/* Chat Header */}
-            <div className="flex items-center justify-end px-4 py-3 bg-[#212121] ">
+            <div className="flex items-center justify-between px-4 py-3 bg-[#212121]">
+              {/* Mobile header with logo and buttons */}
+              <div className="lg:hidden flex items-center gap-2">
+                <button 
+                  onClick={() => router.push('/')}
+                  className="flex items-center gap-2 hover:bg-[#303030] rounded-lg transition-opacity p-2"
+                >
+                  <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                    <div className="w-4 h-4 bg-[#181818] rounded-full"></div>
+                  </div>
+                  <span className="text-sm font-semibold text-gray-200">AI Career Counselor</span>
+                </button>
+                
+                {/* Mobile Conversations Button */}
+                <button
+                  onClick={() => setShowMobileConversations(!showMobileConversations)}
+                  className="flex items-center gap-2 px-3 py-2 bg-[#303030] hover:bg-[#404040] text-white rounded-lg text-sm font-medium transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  Chats
+                </button>
+                
+                {/* Mobile New Chat Button */}
+                <button
+                  onClick={handleNewConversation}
+                  className="flex items-center gap-2 px-3 py-2 bg-[#10a37f] hover:bg-[#0d8a6b] text-white rounded-lg text-sm font-medium transition-colors"
+                >
+                  <Plus className="h-4 w-4" />
+                  New
+                </button>
+              </div>
+              
               <div className="flex items-center space-x-2 relative dropdown-container">
                 <button 
                   onClick={() => setShowDropdown(!showDropdown)}
@@ -254,6 +288,37 @@ export default function ChatPage() {
             />
           </div>
         </div>
+        {/* Mobile Conversation History Panel */}
+        {showMobileConversations && (
+          <div className="lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
+            <div className="absolute right-0 top-0 h-full w-80 bg-[#181818] border-l border-gray-700 shadow-xl">
+              <div className="flex items-center justify-between p-4 border-b border-gray-700">
+                <h2 className="text-lg font-semibold text-white">Recent Chats</h2>
+                <button
+                  onClick={() => setShowMobileConversations(false)}
+                  className="p-2 text-gray-400 hover:text-white hover:bg-[#303030] rounded-lg transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto p-4">
+                <ConversationHistory
+                  conversations={conversations}
+                  onSelectConversation={(id) => {
+                    setActiveConversationId(id);
+                    setShowMobileConversations(false);
+                  }}
+                  onDeleteConversation={handleDeleteConversation}
+                  onRenameConversation={handleRenameConversation}
+                  activeConversationId={activeConversationId || undefined}
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Settings Modal */}
         <SettingsModal

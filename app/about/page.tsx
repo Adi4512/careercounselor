@@ -14,21 +14,21 @@ export default function AboutPage() {
       </div>
 
       {/* Hero Section */}
-      <div className="relative z-10 pt-32 pb-20 px-8">
+      <div className="relative z-10 pt-20 sm:pt-24 lg:pt-32 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6">
             Empowering Careers
             <span className="block text-gray-300 mt-2">Through AI</span>
           </h1>
-          <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-gray-300 mb-8 sm:mb-12 max-w-2xl mx-auto">
             We believe everyone deserves personalized career guidance. Our AI-powered platform makes professional development accessible, insightful, and actionable.
           </p>
         </div>
       </div>
 
       {/* Mission Section */}
-      <div className="max-w-6xl mx-auto px-8 mb-20">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 sm:mb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
           <div>
             <h2 className="text-3xl font-bold mb-6">Our Mission</h2>
             <p className="text-lg text-gray-300 mb-6">
@@ -76,15 +76,15 @@ export default function AboutPage() {
       
 
       {/* Values Section */}
-      <div className="max-w-6xl mx-auto px-8 mb-20">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold mb-6">Our Values</h2>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 sm:mb-20">
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Our Values</h2>
+          <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto">
             The principles that guide everything we do at Elevare AI.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           <div className="text-center">
             <div className="bg-[#10a37f] w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center">
               <Target className="w-8 h-8 text-white" />
@@ -120,13 +120,13 @@ export default function AboutPage() {
       </div>
 
       {/* CTA Section */}
-      <div className="max-w-4xl mx-auto px-8 text-center">
-        <div className="bg-[#1a1a1a] rounded-2xl p-12 border border-gray-800">
-          <h2 className="text-3xl font-bold mb-6">Ready to Transform Your Career?</h2>
-          <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="bg-[#1a1a1a] rounded-2xl p-6 sm:p-8 lg:p-12 border border-gray-800">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Ready to Transform Your Career?</h2>
+          <p className="text-base sm:text-lg text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto">
             Join thousands of professionals who are already using AI to accelerate their career growth.
           </p>
-          <Button className="bg-[#10a37f] hover:bg-[#0d8a6b] text-white px-8 py-3 text-lg">
+          <Button className="bg-[#10a37f] hover:bg-[#0d8a6b] text-white px-6 sm:px-8 py-2 sm:py-3 text-base sm:text-lg">
             Start Your Journey
           </Button>
         </div>

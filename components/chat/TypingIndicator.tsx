@@ -9,7 +9,7 @@ export default function TypingIndicator({ isThinking = true }: TypingIndicatorPr
     // Show pulsating white dot when AI is thinking
     return (
       <div className="flex justify-start mb-6">
-        <div className="w-1 h-1 bg-white rounded-full animate-pulse"></div>
+        <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
       </div>
     );
   }

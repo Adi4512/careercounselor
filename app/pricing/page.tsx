@@ -14,19 +14,19 @@ export default function PricingPage() {
       </div>
 
       {/* Hero Section */}
-      <div className="relative z-10 pt-32 pb-20 px-8">
+      <div className="relative z-10 pt-20 sm:pt-24 lg:pt-32 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6">
             Simple, Transparent
             <span className="block text-gray-300 mt-2">Pricing</span>
           </h1>
-          <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-gray-300 mb-8 sm:mb-12 max-w-2xl mx-auto">
             Choose the plan that fits your career journey. No hidden fees, no surprises.
           </p>
         </div>
 
         {/* Pricing Cards */}
-        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Free Plan */}
           <Card className="bg-[#1a1a1a] border-gray-800 hover:border-gray-600 transition-colors">
             <CardHeader className="text-center pb-8">
@@ -152,9 +152,9 @@ export default function PricingPage() {
         </div>
 
         {/* FAQ Section */}
-        <div className="max-w-4xl mx-auto mt-20">
-          <h2 className="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
-          <div className="space-y-6">
+        <div className="max-w-4xl mx-auto mt-16 sm:mt-20 px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">Frequently Asked Questions</h2>
+          <div className="space-y-4 sm:space-y-6">
             <div className="bg-[#1a1a1a] rounded-lg p-6 border border-gray-800">
               <h3 className="text-lg font-semibold text-white mb-2">Can I change plans anytime?</h3>
               <p className="text-gray-300">Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately.</p>
