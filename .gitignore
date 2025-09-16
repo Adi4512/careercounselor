@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# documentation files (internal use only)
+TDD.md
+TANSTACK_QUERY_SETUP.md
+INTERVIEW_QUESTIONS.md
+CHAT_SETUP.md
+TRPC_INTERVIEW_GUIDE.md
