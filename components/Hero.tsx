@@ -85,7 +85,7 @@ export const Hero = () => {
           </h1>
 
           {/* Description */}
-          <p className="relative z-10 text-base sm:text-lg md:text-xl text-gray-300 mb-8 sm:mb-10 leading-relaxed max-w-xl mx-auto lg:mx-0">
+          <p className="relative z-10 text-base sm:text-lg md:text-xl text-[#FFFFE3] sm:text-gray-300 mb-8 sm:mb-10 leading-relaxed max-w-xl mx-auto lg:mx-0">
             From career discovery to planning, Elevare AI helps you make confident
             decisions with personalized insights.
           </p>
@@ -107,7 +107,7 @@ export const Hero = () => {
           <div className="relative flex items-end justify-center w-full h-full pt-20 sm:pt-24 lg:pt-0 lg:items-center">
             {/* Background Glow Effects - Behind the model */}
             <div className="absolute inset-0 z-10 flex items-end justify-center pt-20 sm:pt-24 lg:pt-0 lg:items-center">
-              <Image 
+              <Image
                 src="/ModelGlow.webp" 
                 alt="AI Glow Effect" 
                 width={800}
