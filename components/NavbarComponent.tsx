@@ -185,22 +185,6 @@ export function NavbarComponent() {
                 <>
                   <NavbarButton 
                     as="button" 
-                    variant="secondary" 
-                    onClick={() => {
-                      handleGuestSignIn();
-                      setIsMobileMenuOpen(false);
-                    }}
-                    disabled={isGuestSigningIn}
-                    className="w-full"
-                  >
-                    {isGuestSigningIn ? (
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    ) : (
-                      "Try as Guest (5 chats)"
-                    )}
-                  </NavbarButton>
-                  <NavbarButton 
-                    as="button" 
                     variant="primary" 
                     onClick={() => {
                       handleGoogleSignIn();

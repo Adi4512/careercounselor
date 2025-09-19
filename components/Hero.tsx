@@ -12,6 +12,7 @@ export const Hero = () => {
   const router = useRouter();
   const [isOpening, setIsOpening] = useState(false);
   const [hasGuestSession, setHasGuestSession] = useState(false);
+  const [isGuestSigningIn, setIsGuestSigningIn] = useState(false);
 
   // Check for existing guest session on component mount
   useEffect(() => {
@@ -32,6 +33,27 @@ export const Hero = () => {
       // which will redirect to chat after successful authentication
       const signInButton = document.querySelector('[data-signin-button]') as HTMLButtonElement;
       signInButton?.click();
+    }
+  };
+
+  const handleGuestSignIn = async () => {
+    console.log('Guest sign in clicked');
+    setIsGuestSigningIn(true);
+    try {
+      // Create or get existing guest session
+      let guestSession = guestSessionManager.getGuestSession();
+      if (!guestSession || guestSessionManager.isSessionExpired()) {
+        guestSession = guestSessionManager.createGuestSession();
+      }
+      
+      console.log('Guest session created/retrieved:', guestSession);
+      
+      // Redirect to chat page
+      await router.push('/chat');
+    } catch (error) {
+      console.error('Guest sign in error:', error);
+    } finally {
+      setIsGuestSigningIn(false);
     }
   };
 
@@ -107,6 +129,26 @@ export const Hero = () => {
               {session || hasGuestSession ? (isOpening ? 'Opening chat…' : 'Start Chatting') : 'Unlock Your Future'}
             </InteractiveHoverButton>
           </div>
+
+          {/* Try as Guest Button - Mobile Only */}
+          {!session && !hasGuestSession && (
+            <div className="relative z-10 flex justify-center lg:justify-start mt-4 lg:hidden">
+              <InteractiveHoverButton
+                className={`text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-2 sm:py-3 dark ${isGuestSigningIn ? 'pointer-events-none opacity-80' : ''}`}
+                onClick={handleGuestSignIn}
+              
+              >
+                {isGuestSigningIn ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Starting...
+                  </>
+                ) : (
+                  'Sign in as a Guest'
+                )}
+              </InteractiveHoverButton>
+            </div>
+          )}
         </div>
 
         {/* Right Side - AI Figure - Full coverage background on mobile, visible on larger screens */}
