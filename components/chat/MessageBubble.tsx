@@ -31,7 +31,21 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
           </div>
           <div className={`flex items-center mt-1 ${isUser ? 'justify-end' : 'justify-start'}`}>
             <span className="text-xs text-gray-500">
-              {format(new Date(message.timestamp), 'HH:mm')}
+              {(() => {
+                try {
+                  const date = message.timestamp instanceof Date 
+                    ? message.timestamp 
+                    : new Date(message.timestamp);
+                  
+                  if (isNaN(date.getTime())) {
+                    return 'now';
+                  }
+                  
+                  return format(date, 'HH:mm');
+                } catch (error) {
+                  return 'now';
+                }
+              })()}
             </span>
             {isUser && message.status && (
               <span className="text-xs text-gray-400 ml-2">

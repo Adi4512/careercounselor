@@ -1,11 +1,12 @@
 import { trpc } from '@/lib/trpc-client';
 
 // tRPC hooks for conversations
-export function useConversations(limit = 20) {
+export function useConversations(limit = 20, options?: { enabled?: boolean }) {
   return trpc.conversations.getAll.useInfiniteQuery(
     { limit },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+      enabled: options?.enabled ?? true,
     }
   );
 }

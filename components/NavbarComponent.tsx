@@ -13,11 +13,15 @@ import {
 import { useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { guestSessionManager } from "@/lib/guest-session";
+import { useRouter } from "next/navigation";
 
 export function NavbarComponent() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isGuestSigningIn, setIsGuestSigningIn] = useState(false);
 
   const handleGoogleSignIn = async () => {
     console.log('Google sign in clicked');
@@ -46,7 +50,30 @@ export function NavbarComponent() {
 
   const handleSignOut = async () => {
     console.log('Sign out clicked');
+    // Clear guest session when signing out
+    guestSessionManager.clearGuestSession();
     await signOut({ callbackUrl: '/' });
+  };
+
+  const handleGuestSignIn = async () => {
+    console.log('Guest sign in clicked');
+    setIsGuestSigningIn(true);
+    try {
+      // Create or get existing guest session
+      let guestSession = guestSessionManager.getGuestSession();
+      if (!guestSession || guestSessionManager.isSessionExpired()) {
+        guestSession = guestSessionManager.createGuestSession();
+      }
+      
+      console.log('Guest session created/retrieved:', guestSession);
+      
+      // Redirect to chat page
+      await router.push('/chat');
+    } catch (error) {
+      console.error('Guest sign in error:', error);
+    } finally {
+      setIsGuestSigningIn(false);
+    }
   };
 
   const navItems = [
@@ -75,7 +102,7 @@ export function NavbarComponent() {
         <NavBody>
           <NavbarLogo />
           <NavItems items={navItems} />
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {session ? (
               <NavbarButton 
                 as="button" 
@@ -85,19 +112,34 @@ export function NavbarComponent() {
                 Sign Out
               </NavbarButton>
             ) : (
-              <NavbarButton 
-                as="button" 
-                variant="primary" 
-                onClick={handleGoogleSignIn}
-                disabled={isSigningIn}
-                data-signin-button
-              >
-                {isSigningIn ? (
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                ) : (
-                  "Sign In"
-                )}
-              </NavbarButton>
+              <>
+                <NavbarButton 
+                  as="button" 
+                  variant="secondary" 
+                  onClick={handleGuestSignIn}
+                  disabled={isGuestSigningIn}
+                  className="text-sm"
+                >
+                  {isGuestSigningIn ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  ) : (
+                    "Try as Guest"
+                  )}
+                </NavbarButton>
+                <NavbarButton 
+                  as="button" 
+                  variant="primary" 
+                  onClick={handleGoogleSignIn}
+                  disabled={isSigningIn}
+                  data-signin-button
+                >
+                  {isSigningIn ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  ) : (
+                    "Sign In"
+                  )}
+                </NavbarButton>
+              </>
             )}
           </div>
         </NavBody>
@@ -126,7 +168,7 @@ export function NavbarComponent() {
                 <span className="block">{item.name}</span>
               </Link>
             ))}
-            <div className="flex w-full flex-col gap-4">
+            <div className="flex w-full flex-col gap-3">
               {session ? (
                 <NavbarButton 
                   as="button" 
@@ -140,22 +182,40 @@ export function NavbarComponent() {
                   Sign Out
                 </NavbarButton>
               ) : (
-                <NavbarButton 
-                  as="button" 
-                  variant="primary" 
-                  onClick={() => {
-                    handleGoogleSignIn();
-                    setIsMobileMenuOpen(false);
-                  }}
-                  disabled={isSigningIn}
-                  className="w-full"
-                >
-                  {isSigningIn ? (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  ) : (
-                    "Sign In"
-                  )}
-                </NavbarButton>
+                <>
+                  <NavbarButton 
+                    as="button" 
+                    variant="secondary" 
+                    onClick={() => {
+                      handleGuestSignIn();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    disabled={isGuestSigningIn}
+                    className="w-full"
+                  >
+                    {isGuestSigningIn ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    ) : (
+                      "Try as Guest (5 chats)"
+                    )}
+                  </NavbarButton>
+                  <NavbarButton 
+                    as="button" 
+                    variant="primary" 
+                    onClick={() => {
+                      handleGoogleSignIn();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    disabled={isSigningIn}
+                    className="w-full"
+                  >
+                    {isSigningIn ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    ) : (
+                      "Sign In"
+                    )}
+                  </NavbarButton>
+                </>
               )}
             </div>
           </MobileNavMenu>

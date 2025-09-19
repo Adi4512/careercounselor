@@ -4,15 +4,23 @@ import { NavbarComponent } from "@/components/NavbarComponent";
 import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import { guestSessionManager } from "@/lib/guest-session";
 export const Hero = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const [isOpening, setIsOpening] = useState(false);
+  const [hasGuestSession, setHasGuestSession] = useState(false);
+
+  // Check for existing guest session on component mount
+  useEffect(() => {
+    const guestSession = guestSessionManager.getGuestSession();
+    setHasGuestSession(!!guestSession);
+  }, []);
 
   const handleGetStarted = async () => {
-    if (session) {
+    if (session || hasGuestSession) {
       try {
         setIsOpening(true);
         await router.push('/chat');
@@ -20,7 +28,7 @@ export const Hero = () => {
         // Keep the loading state until route transition completes (Next will replace the page)
       }
     } else {
-      // If not signed in, the navbar will handle the sign-in flow
+      // If not signed in and no guest session, the navbar will handle the sign-in flow
       // which will redirect to chat after successful authentication
       const signInButton = document.querySelector('[data-signin-button]') as HTMLButtonElement;
       signInButton?.click();
@@ -96,7 +104,7 @@ export const Hero = () => {
               className={`text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-2 sm:py-3 dark ${isOpening ? 'pointer-events-none opacity-80' : ''}`}
               onClick={handleGetStarted}
             >
-              {session ? (isOpening ? 'Opening chat…' : 'Start Chatting') : 'Unlock Your Future'}
+              {session || hasGuestSession ? (isOpening ? 'Opening chat…' : 'Start Chatting') : 'Unlock Your Future'}
             </InteractiveHoverButton>
           </div>
         </div>

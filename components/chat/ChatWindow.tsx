@@ -6,18 +6,24 @@ import { Message } from '@/types/chat';
 import MessageBubble from './MessageBubble';
 import MessageInput from './MessageInput';
 import TypingIndicator from './TypingIndicator';
+import GuestLimitModal from './GuestLimitModal';
 import { useChatMessages, useSendMessage } from '@/hooks/use-trpc-chat';
 import { useCreateConversation } from '@/hooks/use-trpc-conversations';
+import { GuestSession, guestSessionManager } from '@/lib/guest-session';
 
 interface ChatWindowProps {
   conversationId: string | null;
   onConversationCreate?: (id: string) => void;
+  guestSession?: GuestSession | null;
+  remainingChats?: number;
 }
 
-export default function ChatWindow({ conversationId, onConversationCreate }: ChatWindowProps) {
+export default function ChatWindow({ conversationId, onConversationCreate, guestSession, remainingChats }: ChatWindowProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [showGuestLimitModal, setShowGuestLimitModal] = useState(false);
+  const [guestMessages, setGuestMessages] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Auth session
@@ -36,8 +42,16 @@ export default function ChatWindow({ conversationId, onConversationCreate }: Cha
   const [typingContent, setTypingContent] = useState('');
   const [isTypingResponse, setIsTypingResponse] = useState(false);
   
-  // Flatten messages from infinite query
-  const messages = conversationId ? (messagesData?.pages.flatMap(page => page.items) || []) : [];
+  // Flatten messages from infinite query or use guest messages
+  const messages = guestSession 
+    ? guestMessages 
+    : (conversationId ? (messagesData?.pages.flatMap(page => page.items) || []).map(msg => ({
+        id: msg.id,
+        sender: msg.role as 'user' | 'ai',
+        content: msg.content,
+        timestamp: new Date(msg.createdAt),
+        status: 'sent' as const
+      })) : []);
 
   // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = () => {
@@ -49,6 +63,92 @@ export default function ChatWindow({ conversationId, onConversationCreate }: Cha
   }, [messages.length]);
 
   const handleSendMessage = async (content: string) => {
+    // Handle guest session
+    if (guestSession) {
+      // Check if guest has reached limit
+      if (!guestSessionManager.canSendChat()) {
+        setShowGuestLimitModal(true);
+        return;
+      }
+
+      setIsLoading(true);
+      setIsThinking(true);
+      
+      // Add user message to guest messages
+      const userMessage: Message = {
+        id: Date.now().toString(),
+        sender: 'user',
+        content,
+        timestamp: new Date(),
+        status: 'sent'
+      };
+      setGuestMessages(prev => [...prev, userMessage]);
+
+      try {
+        setIsTypingResponse(true);
+        setTypingContent('');
+        
+        // Call guest API
+        const response = await fetch('/api/chat/guest', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: content,
+            history: guestMessages.map(msg => ({
+              sender: msg.sender,
+              content: msg.content,
+              timestamp: msg.timestamp.toISOString()
+            })),
+            guestSessionId: guestSession.id
+          }),
+        });
+
+        if (!response.ok) {
+          if (response.status === 429) {
+            setShowGuestLimitModal(true);
+            return;
+          }
+          throw new Error('Failed to send message');
+        }
+
+        const data = await response.json();
+        
+        // Simulate typing effect
+        const words = data.message.split(' ');
+        for (let i = 0; i < words.length; i++) {
+          setTypingContent(prev => prev + (i > 0 ? ' ' : '') + words[i]);
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+
+        // Add AI response to guest messages
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          sender: 'ai',
+          content: data.message,
+          timestamp: new Date(),
+          status: 'sent'
+        };
+        setGuestMessages(prev => [...prev, aiMessage]);
+        
+        // Update local guest session count
+        guestSessionManager.incrementChatCount();
+        
+      } catch (error) {
+        console.error('Error sending guest message:', error);
+        // Remove the user message if there was an error
+        setGuestMessages(prev => prev.slice(0, -1));
+      } finally {
+        setIsLoading(false);
+        setIsThinking(false);
+        setIsTypingResponse(false);
+        setTypingContent('');
+      }
+      return;
+    }
+
+    // Handle authenticated user (existing logic)
     let currentConversationId = conversationId;
     
     // Create conversation if none exists, using first message as title
@@ -118,17 +218,11 @@ export default function ChatWindow({ conversationId, onConversationCreate }: Cha
     }
   };
 
-  // Convert database messages to UI format
-  const uiMessages = messages.map(msg => ({
-    id: msg.id,
-    sender: msg.role as 'user' | 'ai',
-    content: msg.content,
-    timestamp: new Date(msg.createdAt),
-    status: 'sent' as const
-  }));
+  // Messages are now in the correct format for both guest and database
+  const uiMessages = messages;
   
-  // Check if we have a temporary AI message (thinking state)
-  const hasThinkingMessage = messages.some(msg => 
+  // Check if we have a temporary AI message (thinking state) - only for database messages
+  const hasThinkingMessage = !guestSession && messages.some(msg => 
     msg.id.startsWith('temp-ai-') && msg.content === '...'
   );
   
@@ -180,6 +274,14 @@ export default function ChatWindow({ conversationId, onConversationCreate }: Cha
           placeholder="Let's figure out your next step — ask me anything…"
         />
       </div>
+
+      {/* Guest Limit Modal */}
+      <GuestLimitModal
+        isOpen={showGuestLimitModal}
+        onClose={() => setShowGuestLimitModal(false)}
+        chatsUsed={guestSession?.chatCount || 0}
+        maxChats={guestSession?.maxChats || 5}
+      />
     </div>
   );
 }

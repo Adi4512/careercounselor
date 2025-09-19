@@ -3,6 +3,7 @@
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useGuestSession, guestSessionManager } from '@/lib/guest-session';
 import { useConversations, useCreateConversation, useUpdateConversation, useDeleteConversation } from '@/hooks/use-trpc-conversations';
 import { useSettings, useUpdateSettings, Settings as SettingsType } from '@/hooks/use-trpc-settings';
 import { 
@@ -30,9 +31,10 @@ import SettingsModal from '@/components/chat/SettingsModal';
 export default function ChatPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { session: guestSession, remainingChats, hasSession: hasGuestSession, isLoading: guestSessionLoading } = useGuestSession();
   
-  // TanStack Query hooks
-  const { data: conversationsData } = useConversations();
+  // TanStack Query hooks - only for authenticated users
+  const { data: conversationsData } = useConversations(20, { enabled: !!session && !hasGuestSession });
   const conversations = conversationsData?.pages.flatMap(page => page.items) || [];
   const createConversation = useCreateConversation();
   const updateConversation = useUpdateConversation();
@@ -47,13 +49,14 @@ export default function ChatPage() {
   const [showMobileConversations, setShowMobileConversations] = useState(false);
 
   useEffect(() => {
-    if (status === 'loading') return; // Still loading
+    if (status === 'loading' || guestSessionLoading) return; // Still loading
     
-    if (!session) {
+    // Allow access if user has a session OR a guest session
+    if (!session && !hasGuestSession) {
       router.push('/');
       return;
     }
-  }, [session, status, router]);
+  }, [session, status, router, hasGuestSession, guestSessionLoading]);
   
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -102,7 +105,7 @@ export default function ChatPage() {
     updateSettings.mutate(newSettings);
   };
 
-  if (status === 'loading') {
+  if (status === 'loading' || guestSessionLoading) {
     return (
       <div className="min-h-screen bg-[#303030] flex items-center justify-center">
         <div className="text-center">
@@ -113,7 +116,7 @@ export default function ChatPage() {
     );
   }
 
-  if (!session) {
+  if (!session && !hasGuestSession) {
     return null; // Will redirect
   }
 
@@ -140,31 +143,59 @@ export default function ChatPage() {
               </button>
             </SidebarHeader>
             
+            {/* Guest Session Indicator */}
+            {hasGuestSession && (
+              <div className="bg-[#181818] px-4 py-2 border-b border-[#303030]">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-yellow-400 font-medium">Guest Mode</span>
+                  <span className="text-gray-400">{remainingChats} chats left</span>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Sign in to save conversations and get unlimited chats
+                </p>
+              </div>
+            )}
+            
             <SidebarContent className="bg-[#181818] p-2 overflow-y-auto">
-              {/* New Chat Button */}
-              <div className="mb-4">
-                <button
-                  onClick={handleNewConversation}
-                  className="text-sm font-medium w-full hover:bg-[#303030] text-white px-4 py-2 hover:rounded-lg flex items-center gap-2 hover:border hover:border-gray-600"
-                >
-                  <Plus className="h-4 w-4" />
-                  New Chat
-                </button>
-              </div> 
+              {/* Only show conversation features for authenticated users */}
+              {session && !hasGuestSession && (
+                <>
+                  {/* New Chat Button */}
+                  <div className="mb-4">
+                    <button
+                      onClick={handleNewConversation}
+                      className="text-sm font-medium w-full hover:bg-[#303030] text-white px-4 py-2 hover:rounded-lg flex items-center gap-2 hover:border hover:border-gray-600"
+                    >
+                      <Plus className="h-4 w-4" />
+                      New Chat
+                    </button>
+                  </div> 
 
-              {/* Conversation History */}
-              <SidebarGroup>
-                <SidebarGroupLabel className="text-xs font-medium  text-white px-4 py-2 ">Recent Conversations</SidebarGroupLabel>
-                <SidebarGroupContent className="px-2">
-                  <ConversationHistory
-                    conversations={conversations}
-                    onSelectConversation={handleSelectConversation}
-                    onDeleteConversation={handleDeleteConversation}
-                    onRenameConversation={handleRenameConversation}
-                    activeConversationId={activeConversationId || undefined}
-                  />
-                </SidebarGroupContent>
-              </SidebarGroup>
+                  {/* Conversation History */}
+                  <SidebarGroup>
+                    <SidebarGroupLabel className="text-xs font-medium  text-white px-4 py-2 ">Recent Conversations</SidebarGroupLabel>
+                    <SidebarGroupContent className="px-2">
+                      <ConversationHistory
+                        conversations={conversations}
+                        onSelectConversation={handleSelectConversation}
+                        onDeleteConversation={handleDeleteConversation}
+                        onRenameConversation={handleRenameConversation}
+                        activeConversationId={activeConversationId || undefined}
+                      />
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+                </>
+              )}
+
+              {/* Guest Mode Message */}
+              {hasGuestSession && (
+                <div className="mb-4 px-4 py-3 bg-[#212121] rounded-lg border border-yellow-400/20">
+                  <p className="text-sm text-yellow-400 font-medium mb-2">Guest Mode Active</p>
+                  <p className="text-xs text-gray-400">
+                    Your conversation won't be saved. Sign in to keep your chat history and get unlimited access.
+                  </p>
+                </div>
+              )}
 
               {/* Tools */}
               <SidebarGroup>
@@ -268,14 +299,19 @@ export default function ChatPage() {
                     <button
                       onClick={() => {
                         setShowDropdown(false);
-                        signOut({ callbackUrl: '/' });
+                        if (session) {
+                          signOut({ callbackUrl: '/' });
+                        } else if (hasGuestSession) {
+                          guestSessionManager.clearGuestSession();
+                          router.push('/');
+                        }
                       }}
                       className="w-full px-4 py-2 text-left text-gray-300 hover:bg-[#303030] hover:text-white transition-colors flex items-center space-x-2"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                       </svg>
-                      <span>Sign Out</span>
+                      <span>{hasGuestSession ? 'Exit Guest Mode' : 'Sign Out'}</span>
                     </button>
                   </div>
                 )}
@@ -285,6 +321,8 @@ export default function ChatPage() {
             <ChatWindow 
               conversationId={activeConversationId}
               onConversationCreate={(id) => setActiveConversationId(id)}
+              guestSession={hasGuestSession ? guestSession : null}
+              remainingChats={remainingChats}
             />
           </div>
         </div>
